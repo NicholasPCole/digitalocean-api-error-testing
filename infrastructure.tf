@@ -1,5 +1,5 @@
 provider "digitalocean" {
-  token = "${var.digitalocean_api_token}"
+  token = "${var.api_token}"
 }
 
 resource "digitalocean_droplet" "canaries" {
