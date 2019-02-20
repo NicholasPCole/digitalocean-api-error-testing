@@ -1,6 +1,7 @@
 *.log
 *.retry
 .DS_Store
+.terraform
 digital_ocean.ini
 retrieved-logs
 secrets.yaml
