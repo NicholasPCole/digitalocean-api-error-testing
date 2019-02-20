@@ -1,0 +1,8 @@
+[Unit]
+Description=Check DigitalOcean API connectivity
+
+[Service]
+Type=oneshot
+User={{ ansible_env.USER }}
+WorkingDirectory={{ ansible_env.HOME }}
+ExecStart={{ ansible_env.HOME }}/digitalocean_api_canary.py

@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+
+
+import requests
+import time
+import traceback
+
+
+now = time.gmtime()
+
+metadata_request = requests.get('http://169.254.169.254/metadata/v1.json')
+metadata = metadata_request.json()
+
+log_fields = [
+    metadata['region'],
+    str(metadata['droplet_id']),
+    metadata['interfaces']['public'][0]['ipv4']['ip_address'],
+    time.strftime('%Y-%m-%d %H:%M:%S', now)
+]
+
+api_request_headers = {
+    'Authorization': 'Bearer {{ script_api_token }}',
+    'Content-Type': 'application/json'
+}
+
+try:
+    droplet_list = requests.get('https://api.digitalocean.com/v2/droplets',
+                                headers=api_request_headers)
+except ConnectionResetError as e:
+    log_fields.extend(['failure', 'ConnectionResetError', 'n/a', 'n/a'])
+    traceback.print_exc()
+except Exception as e:
+    log_fields.extend(['failure', e.__class__.__name__, 'n/a', 'n/a'])
+    traceback.print_exc()
+else:
+    log_fields.extend(['success',
+                       str(droplet_list.json()['meta']['total']) + ' Droplets',
+                       droplet_list.headers['Date'],
+                       droplet_list.headers['CF-RAY']])
+
+with open('digitalocean_api_canary.log', 'a') as log_file:
+        log_file.write('; '.join(log_fields) + '\n')

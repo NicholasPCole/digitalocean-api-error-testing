@@ -1,0 +1,29 @@
+---
+- hosts: api-canaries
+  tasks:
+    - name: Temporarily stop the canaries.
+      systemd:
+        name: digitalocean_api_canary.timer
+        state: stopped
+
+    - name: Wait five seconds for any pending calls to complete.
+      pause:
+        seconds: 5
+
+    - name: Fetch the log files.
+      fetch:
+        src: "{{ ansible_env.HOME }}/digitalocean_api_canary.log"
+        dest: retrieved-logs/{{ ansible_date_time.iso8601_basic_short }}_{{ ansible_nodename }}.log
+        flat: yes
+
+    - name: Start the canaries again.
+      systemd:
+        name: digitalocean_api_canary.timer
+        state: started
+
+- hosts: 127.0.0.1
+  connection: local
+  tasks:
+    - name: Combine the log files.
+      shell:
+        cat retrieved-logs/*.log | sort > combined-{{ ansible_date_time.iso8601_basic_short }}.log

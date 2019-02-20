@@ -1,0 +1,7 @@
+---
+- hosts: api-canaries
+  tasks:
+    - name: Stop the systemd timer.
+      systemd:
+        name: digitalocean_api_canary.timer
+        state: stopped

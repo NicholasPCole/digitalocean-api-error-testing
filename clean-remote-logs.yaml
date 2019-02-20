@@ -1,0 +1,5 @@
+---
+- hosts: api-canaries
+  tasks:
+    - name: Clean remote logs.
+      shell: rm -rf {{ ansible_env.HOME }}/*.log
