@@ -1,5 +1,7 @@
 ---
 - hosts: api-canaries
+  vars_files:
+    - secrets.yaml
   tasks:
     - name: Template the Python script.
       template:
