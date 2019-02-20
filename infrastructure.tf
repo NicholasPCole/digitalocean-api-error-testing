@@ -9,9 +9,7 @@ resource "digitalocean_droplet" "canaries" {
   size     = "s-1vcpu-1gb"
   ssh_keys = "${var.droplet_ssh_keys}"
   tags     = ["${digitalocean_tag.canaries.id}"]
-
-  #user_data = "${var.ubuntu_user_data}"
-  count = "${length(var.canary_regions) * var.canary_count}"
+  count    = "${length(var.canary_regions) * var.canary_count}"
 }
 
 resource "digitalocean_tag" "canaries" {
