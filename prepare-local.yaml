@@ -1,0 +1,17 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  vars_files:
+    - secrets.yaml
+  tasks:
+    - name: Template digital_ocean.ini locally.
+      template:
+        src: templates/digital_ocean.ini.j2
+        dest: inventory/digital_ocean.ini
+        mode: 0600
+
+    - name: Template terraform.tfvars locally.
+      template:
+        src: templates/terraform.tfvars.j2
+        dest: terraform.tfvars
+        mode: 0600
