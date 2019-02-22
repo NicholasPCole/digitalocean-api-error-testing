@@ -5,6 +5,9 @@
       systemd:
         name: digitalocean_api_canary.timer
         state: stopped
+      tags:
+        - stop
+        - restart
 
     - name: Wait five seconds for any pending calls to complete.
       pause:
@@ -20,6 +23,9 @@
       systemd:
         name: digitalocean_api_canary.timer
         state: started
+      tags:
+        - start
+        - restart
 
 - hosts: 127.0.0.1
   connection: local
