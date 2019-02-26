@@ -19,3 +19,8 @@ variable "droplet_ssh_keys" {
   type        = "list"
   description = "Numeric IDs of the SSH key(s) to insert from your account."
 }
+
+variable "whitelisted_ip_addresses" {
+  type        = "list"
+  description = "Whitelisted IP addresses to allow access to services like SSH."
+}
