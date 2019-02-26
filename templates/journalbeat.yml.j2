@@ -1,0 +1,17 @@
+journalbeat.inputs:
+  - paths: []
+    seek: cursor
+    include_matches:
+      - systemd.unit=digitalocean_api_canary.service
+      - systemd.unit=digitalocean_api_canary.timer
+cloud.id: {{ elastic_cloud_id }}
+cloud.auth: {{ elastic_cloud_auth }}
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+  - decode_json_fields:
+      fields:
+        - message
+      target: canary_run
+xpack.monitoring.enabled: true
+xpack.monitoring.elasticsearch:

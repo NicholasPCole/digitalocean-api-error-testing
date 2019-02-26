@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 
+import json
 import requests
 import time
 import traceback
@@ -11,12 +12,11 @@ now = time.gmtime()
 metadata_request = requests.get('http://169.254.169.254/metadata/v1.json')
 metadata = metadata_request.json()
 
-log_fields = [
-    metadata['region'],
-    str(metadata['droplet_id']),
-    metadata['interfaces']['public'][0]['ipv4']['ip_address'],
-    time.strftime('%Y-%m-%d %H:%M:%S', now)
-]
+canary_run = {
+    "region": metadata['region'],
+    "droplet_id": metadata['droplet_id'],
+    "ipv4_address": metadata['interfaces']['public'][0]['ipv4']['ip_address'],
+}
 
 api_request_headers = {
     'Authorization': 'Bearer {{ script_api_token }}',
@@ -27,16 +27,20 @@ try:
     droplet_list = requests.get('https://api.digitalocean.com/v2/droplets',
                                 headers=api_request_headers)
 except ConnectionResetError as e:
-    log_fields.extend(['failure', 'ConnectionResetError', 'n/a', 'n/a'])
-    traceback.print_exc()
+    canary_run['result'] = "failure"
+    canary_run['error_code'] = "ConnectionResetError"
+    canary_run['traceback'] = json.dumps(traceback.format_exc())
 except Exception as e:
-    log_fields.extend(['failure', e.__class__.__name__, 'n/a', 'n/a'])
-    traceback.print_exc()
+    canary_run['result'] = "failure"
+    canary_run['error_code'] = e.__class__.__name__
+    canary_run['traceback'] = json.dumps(traceback.format_exc())
 else:
-    log_fields.extend(['success',
-                       str(droplet_list.json()['meta']['total']) + ' Droplets',
-                       droplet_list.headers['Date'],
-                       droplet_list.headers['CF-RAY']])
+    canary_run['result'] = "success"
+    canary_run['droplet_count'] = droplet_list.json()['meta']['total']
+    canary_run['http_response_date_header'] = droplet_list.headers['Date']
+    canary_run['ray_id'] = droplet_list.headers['CF-RAY']
+
+print(json.dumps(canary_run, separators=(',', ':')))
 
 with open('digitalocean_api_canary.log', 'a') as log_file:
-        log_file.write('; '.join(log_fields) + '\n')
+    log_file.write(json.dumps(canary_run, separators=(',', ':')))

@@ -1,0 +1,45 @@
+---
+- hosts: api-canaries
+  vars_files:
+    - secrets.yaml
+  tasks:
+    - name: Add the Elasticsearch public key.
+      apt_key:
+        url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        state: present
+
+    - name: Install dependencies.
+      apt:
+        name: apt-transport-https
+        state: present
+        update_cache: yes
+
+    - name: Add the Elasticsearch repository.
+      apt_repository:
+        repo: deb https://artifacts.elastic.co/packages/6.x/apt stable main
+        filename: elastic-6.x
+        state: present
+
+    - name: Install Journalbeat.
+      apt:
+        name: journalbeat
+        state: present
+        update_cache: yes
+
+    - name: Template the Journalbeat configuration file.
+      template:
+        src: templates/journalbeat.yml.j2
+        dest: /etc/journalbeat/journalbeat.yml
+        mode: 0600
+      register: configuration_file
+      tags:
+        - configuration
+
+    - name: Restart Journalbeat.
+      systemd:
+        name: journalbeat.service
+        enabled: yes
+        state: restarted
+      when: configuration_file.changed
+      tags:
+        - configuration
