@@ -4,11 +4,12 @@ A collection of Terraform and Ansible scripts to try to reproduce errors accessi
 
 ## Usage
 
+Set up your local machine:
+
 1. Copy `secrets.yaml.default` to `secrets.yaml`.
 2. Optional but recommended: Use Ansible Vault to encrypt the secrets file on disk.
 3. In `secrets.yaml`, fill in the values for the Terraform API token, Python script API token, and SSH key numeric IDs. (Using a separate API token for Terraform helps avoid rate limiting when creating or destroying resources.)
-4. Run `ansible-playbook prepare-local-machine.yaml` to generate the local configuration files for Terraform and Ansible.
-5. Run `terraform apply` to create the Droplets.
-6. Run `ansible-playbook install-canaries.yaml` to install the canaries on the Droplets.
-7. Optional: Run `ansible-playbook install-beats.yaml` to ship logs and network usage data to Elasticsearch for closer analysis.
-8. Some time later: Run `ansible-playbook fetch-logs.yaml` to retrieve the API connection logs from each Droplet.
+
+Set up the remote infrastructure:
+
+1. Run `ansible-playbook install-site.yaml`. Include a `--skip-tags elastic-logging` argument if you're not logging to an Elastic Cloud cluster.

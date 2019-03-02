@@ -1,0 +1,22 @@
+---
+- name: Template digital_ocean.ini.
+  template:
+    src: digital_ocean.ini.j2
+    dest: inventory/digital_ocean.ini
+    mode: 0600
+
+- name: Template terraform.tfvars.
+  template:
+    src: terraform.tfvars.j2
+    dest: terraform.tfvars
+    mode: 0600
+
+- name: Deploy the Terraform infrastructure.
+  terraform:
+    project_path: "{{ playbook_dir }}"
+    state: present
+  register: terraform_deploy
+
+- name: Refresh Ansible facts if infrastructure changed.
+  setup:
+  when: terraform_deploy.changed

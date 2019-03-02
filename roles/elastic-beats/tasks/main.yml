@@ -1,0 +1,41 @@
+---
+- name: Add the Elasticsearch public key.
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+
+- name: Install dependencies.
+  apt:
+    name: apt-transport-https
+    state: present
+    update_cache: yes
+
+- name: Add the Elasticsearch repository.
+  apt_repository:
+    repo: deb https://artifacts.elastic.co/packages/6.x/apt stable main
+    filename: elastic-6.x
+    state: present
+
+- name: Install Beats packages.
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+      - journalbeat
+      - packetbeat
+
+- name: Template the Journalbeat configuration file.
+  template:
+    src: journalbeat.yml.j2
+    dest: /etc/journalbeat/journalbeat.yml
+    mode: 0600
+  notify: Restart Journalbeat.
+
+- name: Template the Packetbeat configuration file.
+  template:
+    src: packetbeat.yml.j2
+    dest: /etc/packetbeat/packetbeat.yml
+    mode: 0600
+  notify: Restart Packetbeat.

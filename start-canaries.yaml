@@ -1,7 +1,0 @@
----
-- hosts: api-canaries
-  tasks:
-    - name: Start the systemd timer.
-      systemd:
-        name: digitalocean_api_canary.timer
-        state: started

@@ -1,0 +1,6 @@
+---
+- name: Activate the systemd timer.
+  systemd:
+    name: digitalocean_api_canary.timer
+    state: started
+    daemon_reload: yes

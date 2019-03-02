@@ -1,0 +1,12 @@
+---
+- name: Restart Journalbeat.
+  systemd:
+    name: journalbeat.service
+    enabled: yes
+    state: restarted
+
+- name: Restart Packetbeat.
+  systemd:
+    name: packetbeat.service
+    enabled: yes
+    state: restarted
