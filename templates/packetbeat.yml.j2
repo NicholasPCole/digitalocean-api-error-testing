@@ -1,0 +1,26 @@
+cloud.id: {{ elastic_cloud_id }}
+cloud.auth: {{ elastic_cloud_auth }}
+packetbeat.flows:
+  period: -1s
+  timeout: 30s
+  enabled: false
+packetbeat.interfaces.device: {{ ansible_default_ipv4.interface }}
+packetbeat.interfaces.type: af_packet
+packetbeat.protocols:
+  - type: dns
+    ports: [53]
+    include_authorities: true
+    include_additionals: true
+  - type: http
+    ports: [80]
+    redact_authorization: true
+    send_all_headers: true
+  - type: tls
+    ports: [443]
+processors:
+  - add_cloud_metadata: ~
+setup.dashboards.enabled: true
+setup.template.settings:
+  index.number_of_shards: 3
+xpack.monitoring.enabled: true
+xpack.monitoring.elasticsearch:

@@ -20,18 +20,22 @@
         filename: elastic-6.x
         state: present
 
-    - name: Install Journalbeat.
+    - name: Install Journalbeat and Packetbeat.
       apt:
-        name: journalbeat
+        name: "{{ packages }}"
         state: present
         update_cache: yes
+      vars:
+        packages:
+          - journalbeat
+          - packetbeat
 
     - name: Template the Journalbeat configuration file.
       template:
         src: templates/journalbeat.yml.j2
         dest: /etc/journalbeat/journalbeat.yml
         mode: 0600
-      register: configuration_file
+      register: journalbeat_configuration_file
       tags:
         - configuration
 
@@ -40,6 +44,24 @@
         name: journalbeat.service
         enabled: yes
         state: restarted
-      when: configuration_file.changed
+      when: journalbeat_configuration_file.changed
+      tags:
+        - configuration
+
+    - name: Template the Packetbeat configuration file.
+      template:
+        src: templates/packetbeat.yml.j2
+        dest: /etc/packetbeat/packetbeat.yml
+        mode: 0600
+      register: packetbeat_configuration_file
+      tags:
+        - configuration
+
+    - name: Restart Packetbeat.
+      systemd:
+        name: packetbeat.service
+        enabled: yes
+        state: restarted
+      when: packetbeat_configuration_file.changed
       tags:
         - configuration
