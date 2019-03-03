@@ -35,10 +35,15 @@ except Exception as e:
     canary_run['error_code'] = e.__class__.__name__
     canary_run['traceback'] = json.dumps(traceback.format_exc())
 else:
-    canary_run['result'] = "success"
-    canary_run['droplet_count'] = droplet_list.json()['meta']['total']
     canary_run['http_response_date_header'] = droplet_list.headers['Date']
     canary_run['ray_id'] = droplet_list.headers['CF-RAY']
+
+    if droplet_list.status_code == 200:
+        canary_run['result'] = "success"
+        canary_run['droplet_count'] = droplet_list.json()['meta']['total']
+    elif droplet_list.status_code == 429:
+        canary_run['result'] = "failure"
+        canary_run['error_code'] = "too_many_requests"
 
 print(json.dumps(canary_run, separators=(',', ':')))
 
