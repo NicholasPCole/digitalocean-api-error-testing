@@ -6,7 +6,6 @@ journalbeat.inputs:
     include_matches:
       - systemd.unit=digitalocean_api_canary.service
       - systemd.unit=digitalocean_api_canary.timer
-logging.level: debug
 processors:
   - add_cloud_metadata: ~
   - decode_json_fields:
