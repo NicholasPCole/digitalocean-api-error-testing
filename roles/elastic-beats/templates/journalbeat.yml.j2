@@ -1,11 +1,13 @@
-cloud.id: {{ elastic_cloud_id }}
-cloud.auth: {{ elastic_cloud_auth }}
 journalbeat.inputs:
   - paths: []
     seek: cursor
     include_matches:
       - systemd.unit=digitalocean_api_canary.service
       - systemd.unit=digitalocean_api_canary.timer
+output.elasticsearch:
+  hosts: ["{{ elasticsearch.endpoint }}"]
+  username: {{ elasticsearch.username }}
+  password: {{ elasticsearch.password }}
 processors:
   - add_cloud_metadata: ~
   - decode_json_fields:

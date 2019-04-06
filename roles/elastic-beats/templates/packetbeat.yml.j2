@@ -1,5 +1,7 @@
-cloud.id: {{ elastic_cloud_id }}
-cloud.auth: {{ elastic_cloud_auth }}
+output.elasticsearch:
+  hosts: ["{{ elasticsearch.endpoint }}"]
+  username: {{ elasticsearch.username }}
+  password: {{ elasticsearch.password }}
 packetbeat.flows:
   period: -1s
   timeout: 30s
