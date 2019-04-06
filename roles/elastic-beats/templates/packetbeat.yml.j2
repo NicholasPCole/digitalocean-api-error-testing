@@ -22,7 +22,9 @@ packetbeat.protocols:
 processors:
   - add_cloud_metadata: ~
 setup.dashboards.enabled: true
+setup.template.overwrite: true
 setup.template.settings:
-  index.number_of_shards: 3
+  index.number_of_shards: 1
+  index.number_of_replicas: 0
 xpack.monitoring.enabled: true
 xpack.monitoring.elasticsearch:
