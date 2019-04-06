@@ -12,4 +12,12 @@ Set up your local machine:
 
 Set up the remote infrastructure:
 
-1. Run `ansible-playbook install-site.yaml`. Include a `--skip-tags elastic-logging` argument if you're not logging to an Elastic Cloud cluster.
+1. Run `ansible-playbook install-site.yaml`.
+
+Tags can be used to focus on or skip different tasks in the Ansible playbook. For example:
+
+* `--skip-tags terraform` will skip applying the Terraform infrastructure.
+* `--skip-tags elasticsearch-logging` will skip installing Journalbeat and Packetbeat for logging to Elasticsearch.
+* `--tags canary-script` will only template the Python script.
+* `--tags canary-systemd-units` will only template the systemd units for the Python script.
+* `--tags beats-configuration` will only template the Journalbeat and Packetbeat configuration files.

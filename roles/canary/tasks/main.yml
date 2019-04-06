@@ -4,6 +4,8 @@
     src: digitalocean_api_canary.py.j2
     dest: "{{ ansible_env.HOME }}/digitalocean_api_canary.py"
     mode: 0755
+  tags:
+    - canary-script
 
 - name: Install pip3.
   apt:
@@ -23,3 +25,5 @@
     - digitalocean_api_canary.service
     - digitalocean_api_canary.timer
   notify: Activate the systemd timer.
+  tags:
+    - canary-systemd-units

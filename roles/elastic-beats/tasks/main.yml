@@ -32,6 +32,8 @@
     dest: /etc/journalbeat/journalbeat.yml
     mode: 0600
   notify: Restart Journalbeat.
+  tags:
+    - beats-configuration
 
 - name: Template the Packetbeat configuration file.
   template:
@@ -39,3 +41,5 @@
     dest: /etc/packetbeat/packetbeat.yml
     mode: 0600
   notify: Restart Packetbeat.
+  tags:
+    - beats-configuration

@@ -16,7 +16,11 @@
     project_path: "{{ playbook_dir }}"
     state: present
   register: terraform_deploy
+  tags:
+    - terraform
 
 - name: Refresh Ansible facts if infrastructure changed.
   setup:
   when: terraform_deploy.changed
+  tags:
+    - terraform

@@ -15,4 +15,4 @@
     - canary
     - role: elastic-beats
       tags:
-        - elastic-logging
+        - elasticsearch-logging
