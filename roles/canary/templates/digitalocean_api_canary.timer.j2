@@ -1,6 +1,9 @@
 [Unit]
 Description=Check DigitalOcean API connectivity
 
+[Install]
+WantedBy=timers.target
+
 [Timer]
 OnCalendar=*:*
 AccuracySec=1us
